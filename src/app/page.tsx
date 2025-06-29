@@ -98,6 +98,20 @@ export default function Home() {
           Go to nextjs.org →
         </a>
       </footer>
+      <main style={{ maxWidth: 600, margin: "2rem auto" }}>
+        <h1>認証デモアプリ</h1>
+        <ul>
+          <li>
+            <a href="/signup">サインアップ</a>
+          </li>
+          <li>
+            <a href="/login">ログイン</a>
+          </li>
+          <li>
+            <a href="/dashboard">ダッシュボード（要ログイン）</a>
+          </li>
+        </ul>
+      </main>
     </div>
   );
 }
