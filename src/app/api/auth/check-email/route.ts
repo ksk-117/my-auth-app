@@ -15,6 +15,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ available: false, message: "有効なメールアドレスを入力してください" });
     }
 
+    // データベース接続確認
+    try {
+      await prisma.$connect();
+    } catch (dbError) {
+      console.error("Database connection error:", dbError);
+      return NextResponse.json({ 
+        available: false, 
+        message: "データベース接続エラーが発生しました。環境変数を確認してください。" 
+      }, { status: 500 });
+    }
+
     // 重複チェック
     const existingUser = await prisma.user.findUnique({
       where: { email }
@@ -27,6 +38,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ available: true, message: "このメールアドレスは使用可能です" });
   } catch (error) {
     console.error("Email check error:", error);
-    return NextResponse.json({ available: false, message: "サーバーエラーが発生しました" }, { status: 500 });
+    return NextResponse.json({ 
+      available: false, 
+      message: `サーバーエラーが発生しました: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 } 
