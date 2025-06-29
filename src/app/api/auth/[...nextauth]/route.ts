@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { addLoginHistory, checkAccountLock, incrementLoginAttempts, resetLoginAttempts, lockAccount } from "@/lib/auth-utils";
+import { addLoginHistory, checkAccountLock, incrementLoginAttempts, resetLoginAttempts } from "@/lib/auth-utils";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -28,14 +28,19 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
         await resetLoginAttempts(user);
-        await addLoginHistory(user, req);
+        await addLoginHistory(user, { headers: req.headers as Record<string, string | string[] | undefined>, socket: undefined });
         return { id: user.id + "", email: user.email, name: user.name };
       },
     }),
   ],
   callbacks: {
     async session({ session, token }) {
-      if (token?.sub) session.user.id = token.sub;
+      if (token?.sub) {
+        session.user = {
+          ...session.user,
+          id: token.sub,
+        } as typeof session.user & { id: string };
+      }
       return session;
     },
   },
