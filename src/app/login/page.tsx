@@ -2,6 +2,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -28,18 +29,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "2rem auto" }}>
+    <div style={{ maxWidth: 400, margin: "2rem auto", background: "#fff", padding: "2rem", borderRadius: 8, boxShadow: "0 2px 8px #0001" }}>
       <h2>ログイン</h2>
       <form onSubmit={handleSubmit}>
         <label>Email<br />
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{width:"100%"}} />
         </label><br /><br />
         <label>パスワード<br />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{width:"100%"}} />
         </label><br /><br />
-        <button type="submit" disabled={loading}>ログイン</button>
+        <button type="submit" disabled={loading} style={{width:"100%"}}>ログイン</button>
       </form>
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
+      <div style={{marginTop:16}}><Link href="/signup">サインアップはこちら</Link></div>
     </div>
   );
 }
